@@ -1,9 +1,7 @@
 char titulo[] = {'D', 'o', 'r', 'M', 'i', 'n', 'h', 'o', 'c', 'a'};
 int t0 = second();
 int count = 1;
-int red;
-int green;
-int blue;
+int red, green, blue;
 
 void titulo() {
 
@@ -45,7 +43,3 @@ void titulo() {
   //println("tf: " + tf);
   //println("count: " + count);
 }
-
-
-// teste para o github
-// teste 2 para o github
