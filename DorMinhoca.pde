@@ -10,7 +10,7 @@ int opc = 0;
 void setup() {
   background(183, 232, 129);
   size(1300, 900);
-  frameRate(20);
+  frameRate(60);
   
   // carregar imagens
   //redBall = loadImage("img/bola_vermelha.png");
