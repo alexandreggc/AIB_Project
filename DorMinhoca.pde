@@ -1,5 +1,11 @@
 PFont fontMenu, fontTitulo;
-PImage redBall, greenBall;
+PImage img, maca;
+
+ArrayList <PImage> cabeca1 = new ArrayList<PImage>();
+ArrayList <PImage> cabeca2 = new ArrayList<PImage>();
+ArrayList <PImage> cabeca3 = new ArrayList<PImage>();
+ArrayList <PImage> cabeca4 = new ArrayList<PImage>();
+
 boolean select0=false;
 boolean select1=false;
 boolean select2=false;
@@ -13,8 +19,17 @@ void setup() {
   frameRate(60);
   
   // carregar imagens
-  //redBall = loadImage("img/bola_vermelha.png");
-  //greenBall = loadImage("img/bola_verde.png");
+  maca = loadImage("img/maca.png");
+  // cabeca
+  for (int i=1; i<5; i++){
+    for (int a=0; a<2; a++){
+      img = loadImage("img/cabeca"+i+"_"+a+".png");
+      if(i==1)cabeca1.add(img);
+      if(i==2)cabeca2.add(img);
+      if(i==3)cabeca3.add(img);
+      if(i==4)cabeca4.add(img);
+    }
+  }
   
   // fontes de texto
   fontMenu = loadFont("OCRAExtended-48.vlw");

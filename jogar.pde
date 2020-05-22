@@ -1,8 +1,9 @@
 int velocidade = 75;
 int direcao = 4;
 int direcaoAtual = direcao;
+int boca;
 int[] terreno = {430, 30, 1270, 870};
-
+ 
 boolean resetComida = true;
 boolean initJogo = true;
 int comidaX, comidaY;
@@ -57,16 +58,36 @@ void mostrarMinhoca() {
 
   filtar_direcao();
   corpo.get(0).check_direcao();
+  corpo.get(0).check_colisao(comidaX, comidaY, 7);
+  corpo.get(0).check_paredes();
+  corpo.get(0).check_corpo();
 
   for (PartCorp part : corpo) {
     part.desenhar();
+    cabeca();
     //println(part);
   }
   
-  corpo.get(0).check_paredes();
-  corpo.get(0).check_colisao(comidaX, comidaY, 7);
-  corpo.get(0).check_corpo();
   delay(velocidade);
+  boca=0;
+}
+
+//-----------funcao para desenhar a cabeca da minhoca-----------
+
+void cabeca(){
+  imageMode(CORNER);
+  if (direcao==1){
+    image(cabeca1.get(boca), corpo.get(0).posX-50, corpo.get(0).posY-60);
+  }
+  else if (direcao==2){
+    image(cabeca2.get(boca), corpo.get(0).posX-50, corpo.get(0).posY-50);
+  }
+  else if (direcao==3){
+    image(cabeca3.get(boca), corpo.get(0).posX-60, corpo.get(0).posY-50);
+  }
+  else if (direcao==4){
+    image(cabeca4.get(boca), corpo.get(0).posX-40, corpo.get(0).posY-50);
+  }
 }
 
 //-----------classe para as partes do corpo da minhoca-----------
@@ -75,7 +96,6 @@ class PartCorp {
   int posX, posY;
   int raio = 15;
   int passos=2*raio;
-  boolean colisao;
   boolean conct;
 
   PartCorp(int x, int y) {
@@ -97,6 +117,7 @@ class PartCorp {
     for(int i=0; i<corpo.size(); i++){
       if (posX==corpo.get(i).posX && posY==corpo.get(i).posY && i!=0){
         initJogo=true;
+        boca=1;
       }
     }
   }
@@ -106,6 +127,7 @@ class PartCorp {
   void check_paredes(){
     if (posX>terreno[2] || posX<terreno[0] || posY>terreno[3] || posY<terreno[1]){
       initJogo=true;
+      boca=1;
     }
   }
 
@@ -116,11 +138,10 @@ class PartCorp {
 
     // se a distancia entre os centros das circunferencias for menor que a soma dos raios
     if (distnc < 0.9*(raio + raio2)) {
-      colisao = true;
+      boca = 1;
       resetComida = true;
-      int indereco = corpo.size()-1;
-      int ultimoX = corpo.get(indereco).posX;
-      int ultimoY = corpo.get(indereco).posY;
+      int ultimoX = corpo.get(0).posX;
+      int ultimoY = corpo.get(0).posY;
 
       // adicionar uma parte ao corpo da minhoca consoante a direcao onde esta vai
       if (direcao == 1) {
@@ -179,15 +200,17 @@ void comida() {
 
   // se nao houver comida no terreno temos recoloca-la
   if (resetComida) {
-    comidaX = int(random(terreno[0], terreno[2]));
-    comidaY = int(random(terreno[1], terreno[3]));
+    int fatorX = int(random(0,27));
+    int fatorY = int(random(0,27));
+    comidaX = (terreno[0] + fatorX*30 + 15);
+    comidaY = (terreno[1] + fatorY*30 + 15);
     resetComida=false;
   }
 
   // desenhar a comida
-  fill(255, 0, 0);
-  noStroke();
-  ellipse(comidaX, comidaY, 7, 7);
+  imageMode(CENTER);
+  image(maca, comidaX, comidaY);
+  
 }
 
 //----------funcao para definir o valor da direcao--------
@@ -239,6 +262,7 @@ void fundo_jogo() {
   stroke(165, 95, 52);
   fill(224, 200, 177);
   rect(terreno[0], terreno[1], terreno[2], terreno[3]);
+  
 }
 
 // codigo para intercalar as bolas coloridas
