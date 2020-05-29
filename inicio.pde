@@ -1,13 +1,6 @@
 void inicio() {
-
   println(mouseX, mouseY);
-
-  //butoes do menu
-  // i=0 --> jogar
-  // i=1 --> opcoes
-  // i=2 --> instrucoes
-  // i=3 --> sair
-
+  
   rectMode(RADIUS);
   strokeWeight(7);
   strokeJoin(ROUND);
@@ -74,7 +67,6 @@ void inicio() {
       if (mousePressed==true && i==3) {
         opc = 4;
       }
-      
 
       // se o rato NAO estiver am cima do butao correspodente ao valor de "i"
     } else {
