@@ -37,7 +37,6 @@ void setup() {
 }
 
 void draw(){
-  println("valor de i "+opc);
   if (opc==0) inicio();
   if (opc==1) jogar();
   if (opc==2) opcoes();
@@ -46,7 +45,59 @@ void draw(){
 }
 
 void fundo(){
+  noStroke();
   rectMode(CORNERS);
   fill(183, 232, 129);
   rect(0,0,width,height);
+}
+
+//--------------funcao para desenhar um butao personalizado------------
+
+void butao(String text, int x, int y){
+  boolean fillLetras;
+  int size = 40;
+  textFont(fontMenu);
+  textSize(size);
+  textAlign(CENTER,CENTER);
+  float raioX = (1.24*textWidth(text)) / 2;
+  if (text=="Jogar Novamente"){
+    raioX-=20;
+  }
+  float raioY = 0.875*size;
+  rectMode(RADIUS);
+  
+  //voltar inicio
+  if(mouseX>x-raioX && mouseX<x+raioX && mouseY>y-raioY && mouseY<y+raioY) {
+    fill(124, 158, 250);
+    fillLetras = true;
+    if (mousePressed==true){
+      if (text=="Voltar"){
+        initJogo=true;
+        gameover = false;
+        t0 = second();
+        count = 1;
+        fundo();
+        opc=0;
+      }else if(text=="Jogar Novamente"){
+        initJogo=true;
+        gameover = false;
+      }
+    }
+  }else{
+    fill(255,255,255);
+    fillLetras = false;  
+  }
+  
+  stroke(124, 158, 250);
+  strokeWeight(7);
+  strokeJoin(ROUND);
+  
+  if(opc!=0)rect(x,y,raioX,raioY);
+  
+  if (fillLetras){
+    fill(255, 255, 255);
+  }else{
+    fill(10, 44, 137);
+  }
+  if(opc!=0)text(text,x,y);
 }
