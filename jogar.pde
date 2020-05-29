@@ -1,12 +1,26 @@
-int velocidade = 75;
+int tempDelay = 85;
 int direcao = 4;
 int direcaoAtual = direcao;
+int energia=0;
 int boca;
 int[] terreno = {430, 30, 1270, 870};
- 
-boolean resetComida = true;
+
+char redbull[] = {'R', 'e', 'd', 'B', 'u', 'l', '1'};
+int count2 = 1;
+
+boolean gameover = false;
 boolean initJogo = true;
+
+boolean resetComida = true;
 int comidaX, comidaY;
+boolean resetBebida = true;
+boolean efeito = false;
+boolean Eja = false;
+boolean Bja = false;
+int bebidaX=0, bebidaY=0, rd;
+
+Relogio relogioJogo = new Relogio("jogo");
+Relogio crono = new Relogio("");
 
 ArrayList <PartCorp> corpo = new ArrayList <PartCorp>();
 
@@ -26,23 +40,61 @@ ArrayList <PartCorp> corpo = new ArrayList <PartCorp>();
 
 void jogar() {
   println(mouseX, mouseY);
+  println("-----------"+tempDelay);
   ellipseMode(RADIUS);
   rectMode(RADIUS);
 
   if (initJogo) { 
     corpo.clear();
     corpo.add(new PartCorp(445, 75));
+    energia=0;
     direcaoAtual=4;
     direcao=4;
+    tempDelay = 85;
+    resetBebida = true;
+    resetComida = true;
+    Bja = false;
+    Eja = false;
+    efeito = false;
+    relogioJogo.comecar();
+    relogioJogo.comecaTemp = false;
+    bebidaX=0;
+    crono.comecar();
+    crono.comecaTemp = false;
     initJogo=false;
   }
-
-  fundo_jogo();
-  comida();
-  mostrarMinhoca();
+  
+  if (gameover){
+    fundo_jogo();
+    pontuacao();
+    relogioJogo.para();
+    for (PartCorp part : corpo) {
+      part.desenhar();
+      boca=1;
+      cabeca();
+    }
+    comida();
+    bebida();
+    butao("Jogar Novamente", 215, 750);
+    butao("Voltar", 100, 840);
+    if (opc==1){
+      textSize(100);
+      fill(10, 44, 137);
+      text("GAME OVER", 854, 456);
+    }  
+    
+  }else{
+    fundo_jogo();
+    pontuacao();
+    relogioJogo.atualizar();
+    crono.atualizar();
+    comida();
+    bebida();
+    mostrarMinhoca(); 
+  }
 }
 
-//--------funcao para desenhar a animação da minhoca---------
+//--------funcao para interacao e desenho da animação da minhoca---------
 
 void mostrarMinhoca() {
   rectMode(RADIUS);
@@ -58,7 +110,8 @@ void mostrarMinhoca() {
 
   filtar_direcao();
   corpo.get(0).check_direcao();
-  corpo.get(0).check_colisao(comidaX, comidaY, 7);
+  corpo.get(0).check_colisao(comidaX, comidaY, 7, "maca");
+  corpo.get(0).check_colisao(bebidaX, bebidaY, 10, "redbull");
   corpo.get(0).check_paredes();
   corpo.get(0).check_corpo();
 
@@ -68,7 +121,7 @@ void mostrarMinhoca() {
     //println(part);
   }
   
-  delay(velocidade);
+  delay(tempDelay);
   boca=0;
 }
 
@@ -106,6 +159,7 @@ class PartCorp {
   //---------------desenhar a parte do corpo da minhoca----------------
   
   void desenhar() {
+    rectMode(RADIUS);
     noStroke();
     fill(0, 126, 67);
     rect(posX, posY, raio, raio);
@@ -116,7 +170,7 @@ class PartCorp {
   void check_corpo(){
     for(int i=0; i<corpo.size(); i++){
       if (posX==corpo.get(i).posX && posY==corpo.get(i).posY && i!=0){
-        initJogo=true;
+        gameover=true;
         boca=1;
       }
     }
@@ -126,20 +180,18 @@ class PartCorp {
   
   void check_paredes(){
     if (posX>terreno[2] || posX<terreno[0] || posY>terreno[3] || posY<terreno[1]){
-      initJogo=true;
+      gameover=true;
       boca=1;
     }
   }
 
-  //---------verificar se a minhoca está a colidir com a comida---------
+  //---------verificar se a minhoca está a colidir com objetos---------
   
-  void check_colisao(int x2, int y2, int raio2) {
+  void check_colisao(int x2, int y2, int raio2, String objeto) {
     float distnc = sqrt( (posX-x2)*(posX-x2) + (posY-y2)*(posY-y2) );
-
     // se a distancia entre os centros das circunferencias for menor que a soma dos raios
     if (distnc < 0.9*(raio + raio2)) {
       boca = 1;
-      resetComida = true;
       int ultimoX = corpo.get(0).posX;
       int ultimoY = corpo.get(0).posY;
 
@@ -155,6 +207,17 @@ class PartCorp {
       }
       if (direcao == 4) {
         corpo.add(new PartCorp(ultimoX-passos, ultimoY));
+      }
+      
+      if(objeto=="maca"){
+        energia+=3;
+        if(!efeito) tempDelay-=1;        
+        resetComida = true;
+      }
+      if(objeto=="redbull"){
+        energia+=10;
+        efeito=true;
+        resetBebida = true;
       }
     }
     //println("X, Y: "+ corpo.get(0).posX, corpo.get(0).posY);
@@ -213,6 +276,60 @@ void comida() {
   
 }
 
+//--------------funcao para mostrar a bebida-------------
+
+void bebida() {
+
+  // se nao houver bebida no terreno temos recoloca-la num prazo de 10-15s
+  if (resetBebida) {
+    if(!Bja){
+      rd = int(random(10,15));
+      Bja = true;
+    }
+    relogioJogo.contar(rd);
+    if(relogioJogo.acabouTemp){
+      if(bebidaX!=0)bebidaX=comidaX; bebidaY=comidaY;
+      while(bebidaX == comidaX || bebidaY == comidaY){
+        int fatorX = int(random(0,27));
+        int fatorY = int(random(0,27));
+        bebidaX = (terreno[0] + fatorX*30 + 15);
+        bebidaY = (terreno[1] + fatorY*30 + 15);
+      }
+      relogioJogo.acabouTemp = false;
+      resetBebida=false;
+      Bja=false;
+    }
+  }
+  efeitoEnerg(); 
+  
+  // desenhar a comida
+  if (!resetBebida){
+    imageMode(CENTER);
+    fill(23,132,12);
+    ellipse(bebidaX, bebidaY, 10, 10);
+    //image(, bebidaX, bebidaY);
+  } 
+}
+
+//------------funcao para efeito da bebida na minhoca-----------
+
+void efeitoEnerg(){
+  if (efeito){
+    if(!Eja){
+      tempDelay = tempDelay/2;
+      Eja = true;
+    }
+    crono.contar(5);
+    redbull_anim();
+    if (crono.acabouTemp){
+      Eja = false;
+      efeito = false;
+      tempDelay = tempDelay*2;
+      crono.acabouTemp = false;
+    }
+  }
+}
+
 //----------funcao para definir o valor da direcao--------
 //---------------a cada movimento da minhoca--------------
 
@@ -248,11 +365,75 @@ void keyPressed() {
   }
 }
 
+//------------funcao para a pontucao do jogador-----------
+void pontuacao(){
+  textFont(fontMenu);
+  textSize(40);
+  textAlign(LEFT, CENTER);
+  noStroke();
+  fill(245, 111, 111);
+  rectMode(RADIUS);
+  rect(210, 250, 200, 40, 15);
+  fill(10, 44, 137);
+  text("Energia >> " + energia, 30,250);
+  
+  int pontos = (relogioJogo.tempoSeg * energia)/10;
+  noStroke();
+  fill(249, 250, 3);
+  rectMode(RADIUS);
+  rect(210, 100, 200, 50, 15);
+  fill(10, 44, 137);
+  text("Pontos >> " + pontos, 30,100);
+}
+
+
+void redbull_anim(){
+  textSize(40);
+  textAlign(LEFT, CENTER);
+  noStroke();
+  int posLetraX = 50;
+  int posLetraY = 510;
+  
+  // desenhar cada letra com a sua cor
+  if(opc==1 && !gameover){
+    for (char letra : redbull) {
+      if (count2%2==0){
+        if (letra == 'R' || letra == 'd' || letra == 'u' || letra == '1'){
+          fill(0, 0, 255);
+          noStroke();
+          text(letra, posLetraX, posLetraY);
+        }else if (letra == 'e' || letra == 'B' || letra == 'l') {
+          fill(255);
+          noStroke();
+          text(letra, posLetraX, posLetraY);
+        }
+      }
+      
+      if (count2%2!=0){
+        if (letra == 'e' || letra == 'B' || letra == 'l'){
+          fill(0, 0, 255);
+          noStroke();
+          text(letra, posLetraX, posLetraY);
+        }else if (letra == 'R' || letra == 'd' || letra == 'u' || letra == '1') {
+          noStroke();
+          fill(255);
+          text(letra, posLetraX, posLetraY);
+        }
+      }
+      println(count2%2);
+      posLetraX+=50;
+    }
+    count2 += 1;
+  }
+}
+
+
 //----------funcao para desenhar o fundo do jogo----------
 
 void fundo_jogo() {
   
   // fundo verde principal
+  noStroke();
   rectMode(CORNERS);
   fill(183, 232, 129);
   rect(0, 0, width, height);
