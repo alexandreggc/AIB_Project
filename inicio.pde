@@ -1,6 +1,5 @@
 void inicio() {
   println(mouseX, mouseY);
-  
   rectMode(RADIUS);
   strokeWeight(7);
   strokeJoin(ROUND);
@@ -8,7 +7,7 @@ void inicio() {
   textFont(fontMenu);
   textSize(50);
   textAlign(CENTER, CENTER);
-
+  
   // for loop para desenhar os butoes do menu e as correspodentes funcoes
   for (int i = 0; i < 4; i++) {
 
@@ -130,6 +129,15 @@ void inicio() {
   // desenhar titulo
   textFont(fontTitulo);
   titulo();
-
+  imageMode(CORNER);
+  
+  // imagens restantes e nome
+  image(bebida_init, -50, 350, 600, 500);
+  image(maca_init, 900, 400, 350, 350);
+  image(dorminhoca_init, 470, 220, 350, 350);
+  textFont(fontMenu);
+  textSize(20);
+  fill(0);
+  text("Alexandre Correia", 110, 890);
   
 }
