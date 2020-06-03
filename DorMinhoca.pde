@@ -1,5 +1,8 @@
+import processing.sound.*;
+SoundFile macaSom, bebidaSom, efeitoSom, backgroundSom, gameoverSom;
+
 PFont fontMenu, fontTitulo;
-PImage img, maca;
+PImage img, maca, bebida, maca_init, bebida_init, dormindo, dorminhoca_init;
 
 ArrayList <PImage> cabeca1 = new ArrayList<PImage>();
 ArrayList <PImage> cabeca2 = new ArrayList<PImage>();
@@ -11,15 +14,27 @@ boolean select1=false;
 boolean select2=false;
 boolean select3=false;
 
-int opc = 0;
+int opc=0;
 
 void setup() {
   background(183, 232, 129);
   size(1300, 900);
   frameRate(60);
   
+  //carregar sons
+  macaSom = new SoundFile(this, "sons/maca.mp3");
+  bebidaSom = new SoundFile(this, "sons/bebida.mp3");
+  efeitoSom = new SoundFile(this, "sons/efeitoRB.mp3");
+  backgroundSom = new SoundFile(this, "sons/background.mp3");
+  gameoverSom = new SoundFile(this, "sons/gameover.mp3");
+  
   // carregar imagens
   maca = loadImage("img/maca.png");
+  bebida = loadImage("img/redbull.png");
+  maca_init = loadImage("img/maca_init.png");
+  bebida_init = loadImage("img/redbull_init.png");
+  dormindo = loadImage("img/cabeca4_dormindo.png");
+  dorminhoca_init = loadImage("img/dorminhoca_init.png");
   // cabeca
   for (int i=1; i<5; i++){
     for (int a=0; a<2; a++){
@@ -34,6 +49,11 @@ void setup() {
   // fontes de texto
   fontMenu = loadFont("OCRAExtended-48.vlw");
   fontTitulo = loadFont("Monospaced.bold-130.vlw");
+  backgroundSom.loop();
+  if (backgroundSom.isPlaying()){
+    t0 = second();
+    count = 1;
+  }
 }
 
 void draw(){
@@ -72,6 +92,7 @@ void butao(String text, int x, int y){
     fillLetras = true;
     if (mousePressed==true){
       if (text=="Voltar"){
+        if(!backgroundSom.isPlaying()) backgroundSom.loop();
         initJogo=true;
         gameover = false;
         t0 = second();
@@ -79,8 +100,13 @@ void butao(String text, int x, int y){
         fundo();
         opc=0;
       }else if(text=="Jogar Novamente"){
+        if(!backgroundSom.isPlaying()) backgroundSom.loop();
         initJogo=true;
         gameover = false;
+      }else if(text=="Predefinição"){
+        for(int i=0; i<coresCorpo.length; i++){
+          coresCorpo[i]=color(0, 126, 67);
+        } 
       }
     }
   }else{
