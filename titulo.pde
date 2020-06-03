@@ -3,6 +3,7 @@ int t0 = second();
 int count = 1;
 int red, green, blue;
 
+
 void titulo() {
 
   int tf = second()-t0;

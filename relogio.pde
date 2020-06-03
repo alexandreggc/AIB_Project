@@ -21,6 +21,8 @@ class Relogio{
     rect(210, 350, 200, 40, 15);
     int tempoF = tempoAtual_jogo[1]*60 + tempoAtual_jogo[0];
     fill(10, 44, 137);
+    textSize(40);
+    textAlign(LEFT, CENTER);
     text("Tempo >> " + tempoAtual_jogo[1] + ":" + tempoAtual_jogo[0], 30, 350);
   }
   

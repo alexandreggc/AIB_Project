@@ -3,6 +3,11 @@ int direcao = 4;
 int direcaoAtual = direcao;
 int energia=0;
 int boca;
+int contadorCores=0;
+boolean dormir=true;
+
+int melhorPontuacao = 0;
+boolean recorde;
 int[] terreno = {430, 30, 1270, 870};
 
 char redbull[] = {'R', 'e', 'd', 'B', 'u', 'l', '1'};
@@ -39,14 +44,15 @@ ArrayList <PartCorp> corpo = new ArrayList <PartCorp>();
 // **os println's apenas serviram para ajudar a resolver alguns erros**
 
 void jogar() {
+  println(contadorCores+"        c efew fw fwea");
   println(mouseX, mouseY);
-  println("-----------"+tempDelay);
   ellipseMode(RADIUS);
   rectMode(RADIUS);
 
   if (initJogo) { 
     corpo.clear();
     corpo.add(new PartCorp(445, 75));
+    contadorCores=0;
     energia=0;
     direcaoAtual=4;
     direcao=4;
@@ -56,25 +62,44 @@ void jogar() {
     Bja = false;
     Eja = false;
     efeito = false;
-    relogioJogo.comecar();
-    relogioJogo.comecaTemp = false;
-    bebidaX=0;
-    crono.comecar();
-    crono.comecaTemp = false;
-    initJogo=false;
+    if(!dormir){
+      relogioJogo.comecar();
+      relogioJogo.comecaTemp = false;
+      bebidaX=0;
+      crono.comecar();
+      crono.comecaTemp = false;
+      initJogo=false;
+    } else {
+      fundo_jogo();
+      pontuacao();
+      mostrarMinhoca();
+      noStroke();
+      fill(124, 158, 250);
+      rectMode(RADIUS);
+      rect(210, 350, 200, 40, 15);
+      fill(10, 44, 137);
+      textSize(40);
+      textAlign(LEFT, CENTER);
+      text("Tempo >> 0:0", 30, 350);
+      initJogo = true;
+    }
   }
   
   if (gameover){
+    dormir=true;
     fundo_jogo();
-    pontuacao();
     relogioJogo.para();
     for (PartCorp part : corpo) {
+      if(contadorCores>corpo.size()-1 || contadorCores>coresCorpo.length-1) contadorCores=0;
+      fill(coresCorpo[contadorCores]);
       part.desenhar();
       boca=1;
       cabeca();
+      contadorCores+=1;
     }
     comida();
     bebida();
+    pontuacao();
     butao("Jogar Novamente", 215, 750);
     butao("Voltar", 100, 840);
     if (opc==1){
@@ -84,13 +109,15 @@ void jogar() {
     }  
     
   }else{
-    fundo_jogo();
-    pontuacao();
-    relogioJogo.atualizar();
-    crono.atualizar();
-    comida();
-    bebida();
-    mostrarMinhoca(); 
+    if (!dormir){
+      fundo_jogo();
+      pontuacao();
+      relogioJogo.atualizar();
+      crono.atualizar();
+      comida();
+      bebida();
+      mostrarMinhoca();
+    }
   }
 }
 
@@ -107,20 +134,38 @@ void mostrarMinhoca() {
     corpo.set(i, parteFim);
     corpo.set(indereco, parteInicio);
   }
-
-  filtar_direcao();
-  corpo.get(0).check_direcao();
-  corpo.get(0).check_colisao(comidaX, comidaY, 7, "maca");
-  corpo.get(0).check_colisao(bebidaX, bebidaY, 10, "redbull");
-  corpo.get(0).check_paredes();
-  corpo.get(0).check_corpo();
-
-  for (PartCorp part : corpo) {
-    part.desenhar();
-    cabeca();
-    //println(part);
-  }
   
+  if (!dormir){
+    filtar_direcao();
+    corpo.get(0).check_direcao();
+    corpo.get(0).check_colisao(comidaX, comidaY, 7, "maca");
+    corpo.get(0).check_colisao(bebidaX, bebidaY, 10, "redbull");
+    corpo.get(0).check_paredes();
+    corpo.get(0).check_corpo();
+  
+    for (PartCorp part : corpo) {
+      if(contadorCores>corpo.size()-1 || contadorCores>coresCorpo.length-1) contadorCores=0;
+      fill(coresCorpo[contadorCores]);
+      part.desenhar();
+      cabeca();
+      contadorCores+=1;
+    }
+  }else{
+    for (PartCorp part : corpo) {
+      if(contadorCores>corpo.size()-1 || contadorCores>coresCorpo.length-1) contadorCores=0;
+      fill(coresCorpo[contadorCores]);
+      part.desenhar();
+      imageMode(CENTER);
+      image(dormindo, corpo.get(0).posX+10, corpo.get(0).posY);
+      textFont(fontMenu);
+      textSize(40);
+      textAlign(CENTER, CENTER);
+      fill(10, 44, 137);
+      text("Prima a tecla ENTER", 854, 456);
+      text("para acordar a DorMinhoca", 854, 520);
+      contadorCores+=1;
+    }
+  }
   delay(tempDelay);
   boca=0;
 }
@@ -161,7 +206,6 @@ class PartCorp {
   void desenhar() {
     rectMode(RADIUS);
     noStroke();
-    fill(0, 126, 67);
     rect(posX, posY, raio, raio);
   }
   
@@ -170,6 +214,7 @@ class PartCorp {
   void check_corpo(){
     for(int i=0; i<corpo.size(); i++){
       if (posX==corpo.get(i).posX && posY==corpo.get(i).posY && i!=0){
+        gameoverSom.play();
         gameover=true;
         boca=1;
       }
@@ -180,6 +225,8 @@ class PartCorp {
   
   void check_paredes(){
     if (posX>terreno[2] || posX<terreno[0] || posY>terreno[3] || posY<terreno[1]){
+      gameoverSom.amp(0.5);
+      gameoverSom.play();
       gameover=true;
       boca=1;
     }
@@ -196,6 +243,8 @@ class PartCorp {
       int ultimoY = corpo.get(0).posY;
 
       // adicionar uma parte ao corpo da minhoca consoante a direcao onde esta vai
+      if(contadorCores>coresCorpo.length-1)contadorCores=0;
+      
       if (direcao == 1) {
         corpo.add(new PartCorp(ultimoX, ultimoY+passos));
       }
@@ -206,22 +255,27 @@ class PartCorp {
         corpo.add(new PartCorp(ultimoX+passos, ultimoY));
       }
       if (direcao == 4) {
-        corpo.add(new PartCorp(ultimoX-passos, ultimoY));
+        corpo.add(new PartCorp(ultimoX-passos, ultimoY)); 
       }
       
       if(objeto=="maca"){
+        macaSom.play();
         energia+=3;
         if(!efeito) tempDelay-=1;        
         resetComida = true;
       }
       if(objeto=="redbull"){
-        energia+=10;
-        efeito=true;
-        resetBebida = true;
+        if(!resetBebida && !efeito){
+          bebidaSom.play();
+          backgroundSom.pause();
+          efeitoSom.play();
+          energia+=10;
+          efeito=true;
+          resetBebida = true;
+        }else boca=0;
       }
     }
-    //println("X, Y: "+ corpo.get(0).posX, corpo.get(0).posY);
-    //println("ultimo x, y:  "+ corpo.get(corpo.size()-1).posX, corpo.get(corpo.size()-1).posY);
+    
   }
 
   //----------verificar a direcao do movimento da minhoca-----------
@@ -306,8 +360,7 @@ void bebida() {
   if (!resetBebida){
     imageMode(CENTER);
     fill(23,132,12);
-    ellipse(bebidaX, bebidaY, 10, 10);
-    //image(, bebidaX, bebidaY);
+    image(bebida, bebidaX, bebidaY);
   } 
 }
 
@@ -326,6 +379,7 @@ void efeitoEnerg(){
       efeito = false;
       tempDelay = tempDelay*2;
       crono.acabouTemp = false;
+      backgroundSom.play();
     }
   }
 }
@@ -361,6 +415,8 @@ void keyPressed() {
       direcaoAtual = 3;
     } else if (keyCode == RIGHT) {
       direcaoAtual = 4;
+    } else if (keyCode == ENTER) {
+      dormir = false;
     }
   }
 }
@@ -383,7 +439,29 @@ void pontuacao(){
   rectMode(RADIUS);
   rect(210, 100, 200, 50, 15);
   fill(10, 44, 137);
-  text("Pontos >> " + pontos, 30,100);
+  text("Pontuação: " + pontos, 30,100);
+  
+  if(gameover){
+    if(melhorPontuacao>pontos) {
+      recorde = false;
+    } else if(melhorPontuacao<pontos) {
+      recorde = true;
+      if(melhorPontuacao == 0) melhorPontuacao = pontos;
+      melhorPontuacao = pontos;
+    }
+    if (recorde){
+      textSize(40);
+      fill(10, 44, 137);
+      textAlign(CENTER, CENTER);
+      text("Novo Recorde: " + pontos, 854, 550);
+    } else {
+      textSize(40);
+      fill(10, 44, 137);
+      textAlign(CENTER, CENTER);
+      text("Pontuação: " + pontos, 854, 550);
+      text("Melhor Pontução: " + melhorPontuacao, 854, 600);
+    }
+  }
 }
 
 
@@ -424,6 +502,8 @@ void redbull_anim(){
       posLetraX+=50;
     }
     count2 += 1;
+  }else{
+    efeitoSom.stop();
   }
 }
 
@@ -453,5 +533,7 @@ void fundo_jogo() {
 //      image(redBall, 75*j, 50);
 //    }else{
 //      image(greenBall, 75*j, 50);
+//    }
+//  }Ball, 75*j, 50);
 //    }
 //  }
