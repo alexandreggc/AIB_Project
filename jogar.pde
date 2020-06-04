@@ -379,7 +379,7 @@ void efeitoEnerg(){
       efeito = false;
       tempDelay = tempDelay*2;
       crono.acabouTemp = false;
-      backgroundSom.play();
+      backgroundSom.loop();
     }
   }
 }
@@ -525,15 +525,3 @@ void fundo_jogo() {
   rect(terreno[0], terreno[1], terreno[2], terreno[3]);
   
 }
-
-// codigo para intercalar as bolas coloridas
-//
-//for (int j=0; j < 20; j++){
-//    if (j%2 == 0){
-//      image(redBall, 75*j, 50);
-//    }else{
-//      image(greenBall, 75*j, 50);
-//    }
-//  }Ball, 75*j, 50);
-//    }
-//  }

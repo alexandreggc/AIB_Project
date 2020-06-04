@@ -37,10 +37,4 @@ void titulo() {
   } else {
     fill(red, green, blue);
   }
-  
-  // prints para ajudar a resolver erros
-  //println(second());
-  //println("t0: " + t0);
-  //println("tf: " + tf);
-  //println("count: " + count);
 }

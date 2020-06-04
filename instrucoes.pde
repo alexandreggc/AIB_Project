@@ -24,8 +24,8 @@ void instrucoes(){
   text("e maçãs para aumentar a         captada pela DorMinhoca, no menor ", 50, 200);
   text("      possível.", 50, 250);
   
-  text("Ao longo de uma sessão de jogo, a velocidade da DorMinhoca vai ", 50, 350);
-  text("aumentando à medida que esta come mais maçãs. ", 50, 400);
+  text("Ao longo de uma sessão de jogo, a velocidade da DorMinhoca e o seu ", 50, 350);
+  text("tamanho vão aumentando à medida que esta come mais maçãs. ", 50, 400);
   text("Quando a DorMinhoca bebe um RedBull a sua velocidade aumenta para o  ", 50, 450);
   text("dobro durante 5 segundos, porém durante este tempo, as maçãs ", 50, 500);
   text("ingeridas não afetaram a sua velocidade. ", 50, 550);

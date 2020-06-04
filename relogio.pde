@@ -19,7 +19,6 @@ class Relogio{
     fill(124, 158, 250);
     rectMode(RADIUS);
     rect(210, 350, 200, 40, 15);
-    int tempoF = tempoAtual_jogo[1]*60 + tempoAtual_jogo[0];
     fill(10, 44, 137);
     textSize(40);
     textAlign(LEFT, CENTER);
