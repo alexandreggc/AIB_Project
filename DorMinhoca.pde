@@ -22,23 +22,23 @@ void setup() {
   frameRate(60);
   
   //carregar sons
-  macaSom = new SoundFile(this, "sons/maca.mp3");
-  bebidaSom = new SoundFile(this, "sons/bebida.mp3");
-  efeitoSom = new SoundFile(this, "sons/efeitoRB.mp3");
-  backgroundSom = new SoundFile(this, "sons/background.mp3");
-  gameoverSom = new SoundFile(this, "sons/gameover.mp3");
+  macaSom = new SoundFile(this, "data/sons/maca.mp3");
+  bebidaSom = new SoundFile(this, "data/sons/bebida.mp3");
+  efeitoSom = new SoundFile(this, "data/sons/efeitoRB.mp3");
+  backgroundSom = new SoundFile(this, "data/sons/background.mp3");
+  gameoverSom = new SoundFile(this, "data/sons/gameover.mp3");
   
   // carregar imagens
-  maca = loadImage("img/maca.png");
-  bebida = loadImage("img/redbull.png");
-  maca_init = loadImage("img/maca_init.png");
-  bebida_init = loadImage("img/redbull_init.png");
-  dormindo = loadImage("img/cabeca4_dormindo.png");
-  dorminhoca_init = loadImage("img/dorminhoca_init.png");
+  maca = loadImage("data/img/maca.png");
+  bebida = loadImage("data/img/redbull.png");
+  maca_init = loadImage("data/img/maca_init.png");
+  bebida_init = loadImage("data/img/redbull_init.png");
+  dormindo = loadImage("data/img/cabeca4_dormindo.png");
+  dorminhoca_init = loadImage("data/img/dorminhoca_init.png");
   // cabeca
   for (int i=1; i<5; i++){
     for (int a=0; a<2; a++){
-      img = loadImage("img/cabeca"+i+"_"+a+".png");
+      img = loadImage("data/img/cabeca"+i+"_"+a+".png");
       if(i==1)cabeca1.add(img);
       if(i==2)cabeca2.add(img);
       if(i==3)cabeca3.add(img);
@@ -47,8 +47,8 @@ void setup() {
   }
   
   // fontes de texto
-  fontMenu = loadFont("OCRAExtended-48.vlw");
-  fontTitulo = loadFont("Monospaced.bold-130.vlw");
+  fontMenu = loadFont("data/OCRAExtended-48.vlw");
+  fontTitulo = loadFont("data/Monospaced.bold-130.vlw");
   backgroundSom.loop();
   if (backgroundSom.isPlaying()){
     t0 = second();
