@@ -1,3 +1,3 @@
 # Projeto de AIB
-Projeto final da disciplina de AIB.
-Réplica do jogo Snake com alguma alterações relativamente ao original.
+Projeto final da disciplina de Aplicações Informáticas B.
+Réplica do jogo Snake com algumas alterações relativamente ao original.
